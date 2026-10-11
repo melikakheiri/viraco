@@ -1,0 +1,32 @@
+{
+  "name": "task-board-application",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace frontend\" \"npm run start:dev --workspace backend\"",
+    "build": "npm run build --workspace frontend && npm run build --workspace backend",
+    "lint": "npm run lint --workspace frontend && npm run lint --workspace backend",
+    "format": "prettier --write .",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "migration:run": "npm run migration:run --workspace backend",
+    "migration:generate": "npm run migration:generate --workspace backend --",
+    "seed": "npm run seed --workspace backend",
+    "test:database": "npm run test:database --workspace backend",
+    "migration:show": "npm run migration:show --workspace backend",
+    "test:auth": "npm run test:auth --workspace backend",
+    "test:configuration": "node --test tests/configuration.test.cjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.29"
+    }
+  }
+}
