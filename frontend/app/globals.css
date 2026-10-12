@@ -2,9 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-  font-family: Tahoma, "Segoe UI", sans-serif;
-  color: #17243c;
-  background: #f5f7fb;
+  --primary: #4f46e5;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --radius: 12px;
+  --shadow: 0 2px 8px #0f172a06, 0 1px 2px #0f172a04;
+  font-family: var(--font-vazirmatn), Tahoma, sans-serif;
+  color: var(--text);
+  background: var(--background);
   font-size: 14px;
   line-height: 1.9;
 }
@@ -15,18 +23,20 @@ body {
   margin: 0;
 }
 a {
-  color: #334bc0;
+  color: var(--primary);
   text-decoration: none;
 }
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 button {
   cursor: pointer;
-  border: 1px solid #dce2ed;
+  border: 1px solid var(--border);
   border-radius: 9px;
-  background: white;
+  background: var(--surface);
   padding: 7px 14px;
   color: #253650;
   transition: background 0.15s;
@@ -35,7 +45,7 @@ button:hover {
   background: #eef2ff;
 }
 button:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.5;
 }
 button:focus-visible,
@@ -48,17 +58,18 @@ input:focus-visible,
 input {
   width: 100%;
   min-width: 0;
-  border: 1px solid #c9d2e1;
+  border: 1px solid #cbd5e1;
   border-radius: 9px;
-  background: #fff;
+  background: var(--surface);
   padding: 9px 12px;
-  color: #17243c;
+  color: var(--text);
 }
 input[type="checkbox"] {
   width: 20px;
   height: 20px;
 }
-input:invalid:not(:placeholder-shown):focus {
+input:user-invalid,
+input[aria-invalid="true"] {
   border-color: #ad3547;
 }
 label,
@@ -68,7 +79,7 @@ label,
 }
 label small {
   font-weight: 400;
-  color: #596b83;
+  color: var(--muted);
 }
 label input {
   margin-top: 6px;
@@ -83,8 +94,8 @@ form {
   padding-inline: 28px;
 }
 header {
-  background: white;
-  border-bottom: 1px solid #e1e6f0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 .header {
   min-height: 88px;
@@ -94,14 +105,14 @@ header {
 }
 .brand {
   font-size: 23px;
-  font-weight: 800;
+  font-weight: 700;
   color: #3544a0;
 }
 .brand span {
   display: block;
   font-size: 11px;
   font-weight: 400;
-  color: #596b83;
+  color: var(--muted);
 }
 nav {
   display: flex;
@@ -116,7 +127,7 @@ nav {
 }
 .account small {
   display: block;
-  color: #596b83;
+  color: var(--muted);
 }
 .main {
   padding-block: 40px 60px;
@@ -124,7 +135,7 @@ nav {
 h1 {
   font-size: 28px;
   line-height: 1.6;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 8px;
 }
 h2 {
@@ -139,7 +150,7 @@ p {
   margin-block: 8px 16px;
 }
 .muted {
-  color: #596b83;
+  color: var(--muted);
 }
 .eyebrow {
   font-size: 12px;
@@ -148,11 +159,11 @@ p {
   font-weight: 700;
 }
 .panel {
-  background: #fff;
-  border: 1px solid #e0e6f0;
-  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 24px;
-  box-shadow: 0 3px 12px #18335804;
+  box-shadow: var(--shadow);
 }
 .page-heading {
   display: flex;
@@ -163,8 +174,8 @@ p {
   overflow-wrap: anywhere;
 }
 .primary {
-  background: #4659cc;
-  border-color: #4659cc;
+  background: var(--primary);
+  border-color: var(--primary);
   color: white;
   font-weight: 700;
 }
@@ -219,14 +230,16 @@ p {
 }
 .options {
   z-index: 100;
-  background: white;
+  background: var(--surface);
   border: 1px solid #ccd5e6;
   border-radius: 10px;
   padding: 6px;
   max-height: 300px;
   overflow: auto;
-  min-width: var(--button-width);
-  box-shadow: 0 10px 30px #17243c20;
+  width: var(--button-width);
+  max-width: calc(100vw - 24px);
+  --anchor-gap: 6px;
+  box-shadow: 0 10px 30px #0f172a20;
 }
 .option {
   padding: 8px 12px;
@@ -267,7 +280,7 @@ p {
   overflow-wrap: anywhere;
 }
 .task-card h3 a {
-  color: #17243c;
+  color: var(--text);
 }
 .title-row {
   display: flex;
@@ -316,7 +329,7 @@ dl > div {
   padding-block: 5px;
 }
 dt {
-  color: #596b83;
+  color: var(--muted);
   flex-shrink: 0;
 }
 dd {
@@ -411,7 +424,7 @@ dd {
   align-items: center;
 }
 .editor {
-  border: 1px solid #c9d2e1;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -421,7 +434,7 @@ dd {
   gap: 5px;
   background: #f6f8fc;
   padding: 9px;
-  border-bottom: 1px solid #e0e6f0;
+  border-bottom: 1px solid var(--border);
 }
 .toolbar button {
   font-size: 12px;
@@ -510,7 +523,7 @@ dd {
   top: -100px;
   right: 12px;
   z-index: 200;
-  background: white;
+  background: var(--surface);
   padding: 12px;
 }
 .skip:focus {
@@ -597,5 +610,452 @@ dd {
   }
   .login {
     padding: 24px;
+  }
+}
+/* Shared styles also apply to Headless UI portals. */
+body {
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+}
+button {
+  min-height: 44px;
+  font-weight: 500;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+button:not(:disabled):active {
+  box-shadow: inset 0 1px 3px #0f172a14;
+}
+button:disabled:hover {
+  background: inherit;
+}
+button.primary:disabled {
+  background: var(--primary);
+}
+button.danger:disabled {
+  background: #b62d46;
+}
+:focus-visible {
+  outline: 3px solid #6366f1;
+  outline-offset: 3px;
+}
+input {
+  min-height: 46px;
+  line-height: 1.6;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+input:hover {
+  border-color: #94a3b8;
+}
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #4f46e512;
+}
+input::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+input[type="checkbox"] {
+  min-height: 20px;
+  accent-color: var(--primary);
+  margin: 0;
+  flex-shrink: 0;
+}
+input[dir="ltr"],
+bdi {
+  font-variant-numeric: tabular-nums;
+}
+label small {
+  display: block;
+  margin-top: 6px;
+}
+h1,
+h2,
+h3 {
+  letter-spacing: -0.025em;
+}
+.page-heading p:last-child {
+  margin-bottom: 0;
+}
+.page-heading > *,
+.title-row > *,
+.select-field,
+.form-grid > *,
+.account > span {
+  min-width: 0;
+}
+.brand {
+  color: var(--primary);
+  line-height: 1.5;
+}
+.header nav {
+  gap: 6px;
+}
+.header nav a {
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.header nav a:hover,
+.header nav a[aria-current="page"] {
+  background: #eef2ff;
+  color: #4338ca;
+}
+.account bdi {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.primary:hover {
+  background: #4338ca;
+  border-color: #4338ca;
+}
+.danger:hover {
+  background: #9f1239;
+  border-color: #9f1239;
+}
+.secondary:hover {
+  border-color: #a5b4fc;
+}
+.login {
+  max-width: 460px;
+  padding: 40px;
+  box-shadow: 0 12px 40px #0f172a08;
+}
+.login h1 {
+  margin-top: 12px;
+  font-size: 30px;
+}
+.login form {
+  gap: 22px;
+  margin-block: 30px 24px;
+}
+.login > p:last-child {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-bottom: 0;
+  font-size: 12px;
+}
+.login form > button {
+  min-height: 48px;
+}
+.filters {
+  gap: 16px;
+}
+.filters > button {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.select-button {
+  align-items: center;
+  font-weight: 400;
+}
+.select-button > bdi {
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+.select-button > span:last-child {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.select-button[data-open] {
+  border-color: var(--primary);
+}
+.option {
+  border-radius: 6px;
+  min-height: 42px;
+}
+.option[data-selected] {
+  background: #eef2ff;
+  color: #4338ca;
+}
+.task-card {
+  padding: 22px;
+  gap: 18px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.task-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 16px #0f172a08;
+}
+.task-card h3 {
+  font-size: 17px;
+  line-height: 1.9;
+}
+.task-card h3 a:hover {
+  color: var(--primary);
+}
+.task-card dl {
+  font-size: 12px;
+  margin: 0;
+}
+.task-card dl > div {
+  padding-block: 7px;
+}
+.badge {
+  border-radius: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.priority {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.priority.low {
+  background: #f1f5f9;
+}
+.priority.medium {
+  background: #fffbeb;
+  color: #854d0e;
+}
+.priority.high {
+  background: #fff1f2;
+}
+.card-actions {
+  gap: 8px;
+}
+.card-actions a,
+.card-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 12px;
+}
+.card-actions a:hover {
+  background: #eef2ff;
+}
+.card-actions .text-danger {
+  margin-inline-start: auto;
+}
+.pagination {
+  flex-wrap: wrap;
+}
+.pagination span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.empty {
+  border-style: dashed;
+  color: var(--muted);
+}
+.empty[role="status"]::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 16px;
+  border: 3px solid #e0e7ff;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+}
+.error,
+.success {
+  border: 1px solid;
+  margin-block: 0 16px;
+  overflow-wrap: anywhere;
+}
+.error {
+  border-color: #fecdd3;
+}
+.success {
+  border-color: #bbf7d0;
+}
+form > .error {
+  margin: 0;
+}
+.dialog-panel {
+  padding: 28px;
+  overflow-wrap: anywhere;
+}
+.dialog-panel > .title-row {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.dialog-panel > .title-row button {
+  flex-shrink: 0;
+  width: 44px;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+.dialog-panel form > .actions {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.editor:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #4f46e512;
+}
+.toolbar {
+  gap: 6px;
+  padding: 10px;
+}
+.toolbar button {
+  min-height: 36px;
+  background: transparent;
+  border-color: transparent;
+}
+.toolbar button:hover {
+  background: #e0e7ff;
+}
+.toolbar button[aria-pressed="true"] {
+  border-color: #a5b4fc;
+}
+.ProseMirror {
+  min-height: 200px;
+  line-height: 2;
+}
+.ProseMirror:focus-visible {
+  outline-offset: -3px;
+}
+.ProseMirror > p:only-child:has(> br.ProseMirror-trailingBreak)::before {
+  content: "توضیحات وظیفه را اینجا بنویسید…";
+  color: #64748b;
+  float: inline-start;
+  height: 0;
+  pointer-events: none;
+}
+.richtext,
+.ProseMirror {
+  font-size: 14px;
+  line-height: 2;
+}
+.richtext p,
+.ProseMirror p {
+  margin-block: 0 14px;
+}
+.richtext :is(h1, h2, h3, h4, h5, h6),
+.ProseMirror :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 24px 12px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+.richtext h1,
+.ProseMirror h1 {
+  font-size: 26px;
+}
+.richtext h2,
+.ProseMirror h2 {
+  font-size: 22px;
+}
+.richtext h3,
+.ProseMirror h3 {
+  font-size: 19px;
+}
+.richtext :is(h4, h5, h6),
+.ProseMirror :is(h4, h5, h6) {
+  font-size: 16px;
+}
+.richtext :is(ul, ol),
+.ProseMirror :is(ul, ol) {
+  margin-block: 12px 18px;
+}
+.richtext li p,
+.ProseMirror li p {
+  margin-block: 4px;
+}
+.richtext blockquote,
+.ProseMirror blockquote {
+  margin: 18px 0;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border-color: #818cf8;
+  border-radius: 6px;
+}
+.richtext blockquote p:last-child,
+.ProseMirror blockquote p:last-child {
+  margin-bottom: 0;
+}
+.richtext a,
+.ProseMirror a {
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.link-tools {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: #fafbfe;
+  gap: 8px;
+}
+.link-tools input {
+  min-width: 0;
+  flex-basis: 180px;
+}
+.editor > .error {
+  margin: 12px;
+}
+.detail {
+  max-width: 100%;
+}
+.detail > h2 {
+  margin-block: 24px 16px;
+}
+.user-row > .badge {
+  flex-shrink: 0;
+}
+.user-row p {
+  margin-bottom: 0;
+}
+@media (max-width: 640px) {
+  .center {
+    padding: 16px;
+  }
+  .login {
+    padding: 28px 22px;
+  }
+  .login h1 {
+    font-size: 26px;
+  }
+  .header nav a {
+    padding: 8px 12px;
+  }
+  .account {
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .account > span {
+    flex: 1;
+  }
+  .filters .select-field {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+  .page-heading > .primary {
+    width: 100%;
+  }
+  .task-card {
+    padding: 20px;
+  }
+  .dialog-panel {
+    padding: 20px 16px;
+  }
+  .dialog-panel form > .actions > button {
+    flex: 1;
+  }
+  .toolbar button {
+    min-height: 40px;
+  }
+  .user-row > button {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }

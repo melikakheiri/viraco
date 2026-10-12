@@ -74,9 +74,11 @@ Example create body:
 
 Description supports doc/paragraph/text/heading/blockquote/bulletList/orderedList/listItem, bold/italic/link marks. Heading level 1–6; orderedList start 1–2147483647. Link href: HTTP(S), max 2048 characters, no credentials/control characters/whitespace. Target absent/null/_blank/_self; rel tokens only noopener/noreferrer/nofollow/ugc; class absent/null. Unknown keys/attributes, prototype keys and unsupported embeds are rejected. Limits: serialized UTF-8 64 KiB, depth 20, 2000 nodes. See backend/src/tasks/tiptap.validator.ts for precise tree rules.
 
+Due dates represent instants: ISO timestamps with timezone and up to millisecond precision, persisted as timestamptz and serialized in UTC. The minute-resolution local UI omits unchanged dueDate in PATCH; explicit changes use the browser timezone, and clearing sends null. No schema/API migration was needed.
+
 ## Error behavior
 
-Nest errors normally use `{ statusCode, message, error }`; message can be string or validation array and error label is not always present. Validation target/value objects are suppressed. Frontend maps statuses to Persian messages.
+All Nest and proxy errors use `{ statusCode: number, error: string, message: string, details: string[] }`. Validation details contain constraint messages without target/value objects. Internal exceptions return a generic message and empty details; SQL, credentials and stacks are never serialized. Frontend continues to map HTTP statuses to Persian messages.
 
 | Status | Meaning |
 | --- | --- |
@@ -87,6 +89,6 @@ Nest errors normally use `{ statusCode, message, error }`; message can be string
 | 409 | Duplicate email or last-active-OWNER protection |
 | 413 | Oversized HTTP body, framework parser limit |
 | 429 | Login rate limit, Retry-After |
-| 503 | Proxy cannot reach backend: `{ "message": "Service Unavailable" }` |
+| 503 | Proxy cannot reach backend or upstream exceeds 15 seconds |
 
-Proxy invalid-path response: 400 `{ "message": "Bad Request" }`. Guard ordering affects precedence: unauthenticated protected mutations can return 401 before CSRF/input validation. Handle status codes rather than depending on exact error strings. API/proxy responses disable caching.
+Proxy invalid paths return the same envelope with 400. Proxy caps streamed request bodies at 100 KiB, matching the backend parser limit. Guard ordering affects precedence: unauthenticated protected mutations can return 401 before CSRF/input validation. Handle status codes rather than depending on exact error strings. API/proxy responses disable caching.

@@ -1,7 +1,7 @@
 ﻿"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { api, User, roles, message } from "../lib/api";
 const Context = createContext<{
   user: User;
@@ -17,6 +17,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const reload = async () => {
     const data = await api<{ user: User }>("/auth/me");
     setUser(data.user);
@@ -56,8 +57,24 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
             ◈ ویراکو <span>مدیریت وظایف</span>
           </Link>
           <nav aria-label="منوی اصلی">
-            <Link href="/">وظایف</Link>
-            {user.role === "OWNER" && <Link href="/users">کاربران</Link>}
+            <Link
+              href="/"
+              aria-current={
+                pathname === "/" || pathname.startsWith("/tasks/")
+                  ? "page"
+                  : undefined
+              }
+            >
+              وظایف
+            </Link>
+            {user.role === "OWNER" && (
+              <Link
+                href="/users"
+                aria-current={pathname === "/users" ? "page" : undefined}
+              >
+                کاربران
+              </Link>
+            )}
           </nav>
           <div className="account">
             <span>

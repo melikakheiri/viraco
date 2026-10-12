@@ -13,7 +13,8 @@
     "test:database": "ts-node src/database/database.test.ts",
     "migration:show": "typeorm-ts-node-commonjs -d src/database/data-source.ts migration:show",
     "test:auth": "ts-node src/auth/auth.test.ts",
-    "test": "npm run test:database && npm run test:auth && npm run test:rbac && npm run test:tasks",
+    "test": "npm run test:contracts && npm run test:database && npm run test:auth && npm run test:rbac && npm run test:tasks",
+    "test:contracts": "ts-node src/contracts.test.ts",
     "test:rbac": "ts-node src/users/users.test.ts",
     "test:tasks": "ts-node src/tasks/tasks.test.ts"
   },

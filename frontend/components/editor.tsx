@@ -1,7 +1,7 @@
 "use client";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
+import { TaskLink } from "../lib/task-link";
 import { useState } from "react";
 import { Doc, safeLink } from "../lib/api";
 import { validTipTap } from "../lib/document";
@@ -18,13 +18,16 @@ export function Editor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({
+        link: false,
+        underline: false,
+        trailingNode: false,
         code: false,
         codeBlock: false,
         strike: false,
         horizontalRule: false,
         hardBreak: false,
       }),
-      Link.configure({
+      TaskLink.configure({
         openOnClick: false,
         autolink: false,
         linkOnPaste: false,
@@ -37,6 +40,7 @@ export function Editor({
       attributes: {
         dir: "rtl",
         "aria-label": "توضیحات وظیفه",
+        "aria-placeholder": "توضیحات وظیفه را اینجا بنویسید…",
         role: "textbox",
         "aria-multiline": "true",
       },

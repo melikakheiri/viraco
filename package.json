@@ -6,6 +6,7 @@
     "backend"
   ],
   "scripts": {
+    "verify:isolated": "node scripts/verify-isolated.cjs",
     "dev": "concurrently \"npm run dev --workspace frontend\" \"npm run start:dev --workspace backend\"",
     "build": "npm run build --workspace frontend && npm run build --workspace backend",
     "lint": "npm run lint --workspace frontend && npm run lint --workspace backend",
@@ -25,6 +26,7 @@
     "prettier": "^3.4.2"
   },
   "overrides": {
+    "postcss-selector-parser": "^7.1.6",
     "next": {
       "postcss": "^8.5.29"
     }

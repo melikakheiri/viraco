@@ -4,14 +4,14 @@ import { test } from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { compare } from 'bcryptjs';
 import source from './data-source';
-import { assertLocalDatabase } from './local-guard';
+import { assertTestDatabase } from './local-guard';
 import { seedUsers, seedAccounts } from './seed';
 import { User, UserRole } from './entities/user.entity';
 import { Task } from './entities/task.entity';
 import { RefreshSession } from './entities/refresh-session.entity';
 
 void test('Phase 2 PostgreSQL integration', async t => {
-  assertLocalDatabase();
+  assertTestDatabase();
   await source.initialize();
   try {
     await t.test('migration is recorded, rerun is empty, metadata matches schema', async () => {

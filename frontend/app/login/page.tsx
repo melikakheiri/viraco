@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import {validationProps} from '../../lib/forms';
+import { validationProps } from "../../lib/forms";
 import { useRouter } from "next/navigation";
 import { api, message } from "../../lib/api";
 export default function Login() {
@@ -13,7 +13,9 @@ export default function Login() {
         <p className="eyebrow">ویراکو · فضای همکاری تیم</p>
         <h1>خوش آمدید</h1>
         <p className="muted">برای مدیریت وظایف وارد حساب خود شوید.</p>
-        <form {...validationProps}
+        <form
+          {...validationProps}
+          aria-busy={busy}
           onSubmit={async (e) => {
             e.preventDefault();
             if (busy) return;

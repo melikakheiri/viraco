@@ -13,3 +13,7 @@ Security review focuses on relative browser API routes, environment secrets, no 
 AGENTS.md is the project AI instruction file. Its final rules match the architecture: Next proxy, Nest business logic, synchronize disabled, reviewed migrations, env credentials, meaningful tests/build/lint, security and RTL review. No other project AI instruction files were found outside dependencies/generated directories.
 
 The human owner remains responsible for reviewing changes, accepting risks, approving deployment/migrations and making the final submission. No such approval is fabricated. Phase 8 does not commit or push; successful tests are evidence, not a guarantee of security or production readiness.
+
+## Final remediation - 2026-10-12
+
+Codex read the supplied final remediation prompt and every audit finding, verified the code, implemented raw auth/user validation, a common error filter/proxy envelope, due-date preservation, dependency updates, loopback database binding and isolated test configuration. It generated and ran regression tests and inspected RBAC, cookies, CSRF, JSON limits, migrations and RTL behavior. No agents, custom skills or hooks were used. AGENTS.md rules and the user constraints governed the work; no commit, push or schema migration was made. Local database credentials were rotated without resetting the existing volume or changing application rows. Automated review/checks are recorded in FINAL-REMEDIATION-REPORT.md; independent human approval, video and deadline verification remain external.

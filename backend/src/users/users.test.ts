@@ -11,7 +11,7 @@ import * as jwt from "jsonwebtoken";
 import { AppModule } from "../app.module";
 import { configureApp } from "../configure-app";
 import source from "../database/data-source";
-import { assertLocalDatabase } from "../database/local-guard";
+import { assertTestDatabase } from "../database/local-guard";
 import { User, UserRole } from "../database/entities/user.entity";
 import { RefreshSession } from "../database/entities/refresh-session.entity";
 import { seedAccounts } from "../database/seed";
@@ -19,7 +19,7 @@ import { AuthConfig } from "../auth/auth.config";
 import { TaskPolicyService } from "../auth/task-policy.service";
 
 void test("RBAC and user management HTTP integration (local PostgreSQL)", async (t) => {
-  assertLocalDatabase();
+  assertTestDatabase();
   let app: INestApplication | undefined;
   let db: DataSource;
   let base = process.env.TEST_BASE_URL;

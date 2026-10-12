@@ -4,6 +4,13 @@ import { config } from "dotenv";
 import path from "node:path";
 config({ path: path.resolve(process.cwd(), "../backend/.env"), quiet: true });
 const accounts = ["OWNER", "MANAGER", "MEMBER"] as const;
+test.beforeAll(() => {
+  expect(process.env.TEST_DATABASE).toBe("true");
+  expect(["localhost", "127.0.0.1", "::1"]).toContain(process.env.DATABASE_HOST);
+  expect(process.env.DATABASE_PORT).not.toBe("5433");
+  expect(process.env.DATABASE_NAME).toMatch(/^taskboard_test_[a-z0-9_]+$/);
+  expect(process.env.PLAYWRIGHT_BASE_URL).toBe(process.env.APP_ORIGIN);
+});
 for (const role of accounts) {
   test(`${role}: real login, task CRUD, RTL and responsive layouts`, async ({
     page,
@@ -44,7 +51,8 @@ for (const role of accounts) {
       await expect(
         page.getByRole("link", { name: "کاربران", exact: true }),
       ).toHaveCount(0);
-    for (const width of [1440, 390]) {
+    await expect(page.locator('.empty[role="status"]')).toHaveCount(0);
+    for (const width of [1440, 768, 390]) {
       await page.setViewportSize({ width, height: 900 });
       expect(
         await page.evaluate(
@@ -61,6 +69,24 @@ for (const role of accounts) {
       page.getByRole("button", { name: "＋ وظیفه جدید" }),
     ).toBeFocused();
     await page.getByRole("button", { name: "＋ وظیفه جدید" }).click();
+    for (const width of [390, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const panel = page.locator(".dialog-panel");
+      await expect(panel).toBeVisible();
+      expect(
+        await panel.evaluate((el) => el.scrollWidth <= el.clientWidth),
+      ).toBeTruthy();
+      const bounds = await panel.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+      if (role === "OWNER") {
+        await page.screenshot({
+          path: `test-results/task-dialog-${width}.png`,
+          fullPage: true,
+        });
+      }
+    }
+    await page.setViewportSize({ width: 390, height: 900 });
     await page.getByLabel("عنوان وظیفه").fill(title);
     await page
       .getByRole("textbox", { name: "توضیحات وظیفه" })
@@ -119,7 +145,7 @@ for (const role of accounts) {
     ).toBeTruthy();
     await page.getByRole("button", { name: "حذف", exact: true }).click();
     await page.getByRole("button", { name: "حذف وظیفه", exact: true }).click();
-    await expect(page).toHaveURL("http://localhost:3000/");
+    await expect(page).toHaveURL(`${process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000"}/`);
     await expect(
       page.getByRole("link", { name: title + " ویرایش", exact: true }),
     ).toHaveCount(0);
@@ -137,8 +163,9 @@ test("OWNER: user creation, role/status changes, filters, pagination and failure
   expect(["localhost", "127.0.0.1", "::1"]).toContain(
     process.env.DATABASE_HOST,
   );
-  expect(process.env.DATABASE_PORT).toBe("5433");
-  expect(process.env.DATABASE_NAME).toBe("taskboard");
+  expect(process.env.TEST_DATABASE).toBe("true");
+  expect(process.env.DATABASE_PORT).not.toBe("5433");
+  expect(process.env.DATABASE_NAME).toMatch(/^taskboard_test_[a-z0-9_]+$/);
   const email = `phase6-${Date.now()}@example.test`,
     ids: string[] = [];
   let userId: string | undefined;
@@ -169,7 +196,21 @@ test("OWNER: user creation, role/status changes, filters, pagination and failure
     await expect(page.getByRole("dialog")).toHaveCount(0);
     const row = page.locator("article").filter({ hasText: email });
     await expect(row).toBeVisible();
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+          .analyze()
+      ).violations,
+    ).toEqual([]);
     await page.getByRole("button", { name: "＋ کاربر جدید" }).click();
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+          .analyze()
+      ).violations,
+    ).toEqual([]);
     await page.getByLabel("ایمیل", { exact: true }).fill(email);
     await page.getByLabel("رمز عبور").fill("Phase6-test-password-123!");
     await page
@@ -201,7 +242,7 @@ test("OWNER: user creation, role/status changes, filters, pagination and failure
     await expect(row.getByText("فعال", { exact: true })).toBeVisible();
     for (let i = 0; i < 13; i++) {
       const response = await page.request.post("/api/v1/todos", {
-        headers: { Origin: "http://localhost:3000" },
+        headers: { Origin: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000" },
         data: {
           title: `صفحه‌بندی ${email} ${i}`,
           assigneeId: userId,
@@ -241,7 +282,7 @@ test("OWNER: user creation, role/status changes, filters, pagination and failure
       expect(
         (
           await page.request.delete("/api/v1/todos/" + id, {
-            headers: { Origin: "http://localhost:3000" },
+            headers: { Origin: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000" },
           })
         ).status(),
       ).toBe(204);
@@ -279,7 +320,7 @@ test("MEMBER: assigned task can be edited, cannot be deleted or assigned to anot
   page,
   request,
 }) => {
-  const headers = { Origin: "http://localhost:3000" };
+  const headers = { Origin: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000" };
   expect(
     (
       await request.post("/api/v1/auth/login", {
@@ -297,7 +338,7 @@ test("MEMBER: assigned task can be edited, cannot be deleted or assigned to anot
   );
   const response = await request.post("/api/v1/todos", {
     headers,
-    data: { title: "وظیفه واگذارشده برای آزمون نقش", assigneeId: member.id },
+    data: { title: "وظیفه واگذارشده برای آزمون نقش", assigneeId: member.id, dueDate: "2026-10-20T16:04:56.789+03:30" },
   });
   expect(response.status()).toBe(201);
   const task = await response.json();
@@ -318,6 +359,21 @@ test("MEMBER: assigned task can be edited, cannot be deleted or assigned to anot
     await expect(
       page.getByRole("button", { name: "حذف", exact: true }),
     ).toHaveCount(0);
+    // Exercise server RBAC through the proxy, independently of hidden UI controls.
+    expect(
+      (
+        await page.request.delete("/api/v1/todos/" + task.id, { headers })
+      ).status(),
+    ).toBe(403);
+    const owner = users.find((u: { role: string }) => u.role === "OWNER");
+    expect(
+      (
+        await page.request.patch("/api/v1/todos/" + task.id, {
+          headers,
+          data: { assigneeId: owner.id },
+        })
+      ).status(),
+    ).toBe(403);
     await page.getByRole("button", { name: "ویرایش", exact: true }).click();
     await page.getByRole("button", { name: "مسئول", exact: true }).click();
     await expect(page.getByRole("option")).toHaveCount(2);
@@ -332,6 +388,8 @@ test("MEMBER: assigned task can be edited, cannot be deleted or assigned to anot
         exact: true,
       }),
     ).toBeVisible();
+    const persisted = await (await page.request.get("/api/v1/todos/" + task.id)).json();
+    expect(persisted.dueDate).toBe("2026-10-20T12:34:56.789Z");
     await page.goto("/users");
     await expect(page.getByRole("main").getByRole("alert")).toContainText(
       "اجازه دسترسی",
@@ -340,6 +398,56 @@ test("MEMBER: assigned task can be edited, cannot be deleted or assigned to anot
     expect(
       (await request.delete("/api/v1/todos/" + task.id, { headers })).status(),
     ).toBe(204);
-    await request.post("/api/v1/auth/logout", { headers, data: {} });
+    expect(
+      (
+        await request.post("/api/v1/auth/logout", { headers, data: {} })
+      ).status(),
+    ).toBe(204);
+    expect((await request.get("/api/v1/auth/me")).status()).toBe(401);
   }
+});
+
+test("login: local Persian font, keyboard focus, accessibility and responsive layout", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.evaluate(() => document.fonts.ready);
+  expect(
+    await page.evaluate(() =>
+      [...document.fonts].some(
+        (font) =>
+          font.family.toLowerCase().includes("vazirmatn") &&
+          font.status === "loaded",
+      ),
+    ),
+  ).toBeTruthy();
+  expect(
+    await page
+      .locator("body")
+      .evaluate((el) => getComputedStyle(el).fontFamily),
+  ).toContain("vazirmatn");
+  for (const width of [390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBeTruthy();
+    await expect(
+      page.getByRole("button", { name: "ورود به حساب" }),
+    ).toBeInViewport();
+    await page.screenshot({
+      path: "test-results/login-" + width + ".png",
+      fullPage: true,
+    });
+  }
+  await page.keyboard.press("Tab");
+  await expect(page.getByLabel("ایمیل", { exact: true })).toBeFocused();
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
 });

@@ -12,6 +12,7 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 phase*-audit*.json
+remediation-audit*.json
 
 # Local credentials, key material, dumps and temporary review output
 *.pem

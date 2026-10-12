@@ -327,7 +327,9 @@ export function TaskDetail({ id }: { id: string }) {
           <button onClick={() => setVersion((v) => v + 1)}>تلاش دوباره</button>
         </div>
       ) : !task ? (
-        <p role="status">در حال دریافت وظیفه…</p>
+        <div className="panel empty" role="status">
+          در حال دریافت وظیفه…
+        </div>
       ) : (
         <>
           <div className="page-heading">

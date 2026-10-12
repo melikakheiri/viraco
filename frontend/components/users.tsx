@@ -66,7 +66,9 @@ export function Users() {
         </p>
       )}
       {loading ? (
-        <p role="status">در حال دریافت کاربران…</p>
+        <div className="panel empty" role="status">
+          در حال دریافت کاربران…
+        </div>
       ) : (
         <div className="user-list">
           {users.map((u) => (

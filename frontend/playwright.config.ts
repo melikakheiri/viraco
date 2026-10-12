@@ -5,9 +5,11 @@ export default defineConfig({
   workers: 1,
   timeout: 60000,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
     headless: true,
     channel: process.env.PLAYWRIGHT_CHANNEL,
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
   },
   reporter: "list",
 });

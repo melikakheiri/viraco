@@ -6,6 +6,7 @@ const { spawnSync } = require('node:child_process');
 test('Compose rejects missing and empty database passwords without a default', () => {
   const compose = readFileSync('docker-compose.yml', 'utf8');
   assert.match(compose, /POSTGRES_PASSWORD: \$\{POSTGRES_PASSWORD:\?[^}]+\}/);
+  assert.match(compose, /127\.0\.0\.1:5433:5432/);
   for (const password of [undefined, '']) {
     const env = { ...process.env };
     delete env.POSTGRES_PASSWORD;

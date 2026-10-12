@@ -22,6 +22,7 @@ import {
 import { Editor } from "./editor";
 import { validTipTap } from "../lib/document";
 import { useAuth } from "./auth";
+import { dueDatePatch, localDueDate } from "../lib/due-date";
 export function Select({
   label,
   value,
@@ -38,13 +39,13 @@ export function Select({
       <Listbox value={value} onChange={onChange}>
         <span className="field-label">{label}</span>
         <ListboxButton aria-label={label} className="select-button">
-          {options[value] || value}
+          <bdi>{options[value] || value}</bdi>
           <span aria-hidden="true">⌄</span>
         </ListboxButton>
         <ListboxOptions anchor="bottom start" className="options" dir="rtl">
           {Object.entries(options).map(([key, label]) => (
             <ListboxOption key={key} value={key} className="option">
-              {label}
+              <bdi>{label}</bdi>
             </ListboxOption>
           ))}
         </ListboxOptions>
@@ -103,14 +104,7 @@ export function TaskForm({
     [priority, setPriority] = useState(task?.priority || "medium"),
     [assignee, setAssignee] = useState(task?.assigneeId || ""),
     [due, setDue] = useState(
-      task?.dueDate
-        ? new Date(
-            new Date(task.dueDate).getTime() -
-              new Date(task.dueDate).getTimezoneOffset() * 60000,
-          )
-            .toISOString()
-            .slice(0, 16)
-        : "",
+      localDueDate(task?.dueDate),
     ),
     [description, setDescription] = useState<Doc>(
       task?.description || { type: "doc", content: [] },
@@ -156,7 +150,7 @@ export function TaskForm({
                 status,
                 priority,
                 description,
-                dueDate: due ? new Date(due).toISOString() : null,
+                ...dueDatePatch(due, task),
                 ...(assignee !== (task?.assigneeId || "") || !task
                   ? { assigneeId: assignee || null }
                   : {}),

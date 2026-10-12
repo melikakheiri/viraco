@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
-    "@tiptap/extension-link": "^2.27.3",
-    "@tiptap/react": "^2.11.5",
-    "@tiptap/starter-kit": "^2.27.3",
+    "@tiptap/extension-link": "^3.31.4",
+    "@tiptap/react": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
